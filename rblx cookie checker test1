@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaTools — Dashboard</title>
+<style>
+:root{--bg:#090b10;--panel:#10141c;--panel2:#151a24;--line:#242b38;--text:#f3f5f8;--muted:#8e98a8;--accent:#7c5cff;--accent2:#9b87ff;--danger:#ff5577}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input{font:inherit}.app{display:flex;min-height:100vh}.sidebar{width:250px;background:#0d1016;border-right:1px solid var(--line);padding:22px 16px;position:fixed;inset:0 auto 0 0;z-index:20;transition:.25s}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:20px;margin:3px 10px 28px}.logo{width:35px;height:35px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#3f2ca8);display:grid;place-items:center;box-shadow:0 8px 25px #7c5cff33}
+.nav-title{font-size:11px;text-transform:uppercase;color:#606a7b;letter-spacing:1.3px;margin:20px 11px 8px}.nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;margin:4px 0;border-radius:9px;color:#aeb6c5;text-decoration:none;font-size:14px;cursor:pointer}.nav a:hover,.nav a.active{background:#181d27;color:#fff}.nav a.active{box-shadow:inset 3px 0 var(--accent)}.bottom{position:absolute;bottom:18px;left:16px;right:16px}.profile{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid var(--line);border-radius:10px}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#242a38;font-size:13px}.profile small{color:var(--muted)}
+.main{margin-left:250px;width:calc(100% - 250px);padding:22px 28px}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}.menu{display:none}.topbar h1{font-size:25px;margin:0}.topbar p{margin:5px 0 0;color:var(--muted);font-size:13px}.top-actions{display:flex;gap:10px}.icon-btn,.btn{border:1px solid var(--line);background:var(--panel);color:#fff;border-radius:9px;padding:9px 13px;cursor:pointer}.btn.primary{background:var(--accent);border-color:var(--accent)}.btn:hover{filter:brightness(1.1)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:22px}.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px}.stat{display:flex;justify-content:space-between;align-items:start}.stat .label{font-size:12px;color:var(--muted)}.stat strong{display:block;font-size:25px;margin-top:8px}.stat-icon{width:38px;height:38px;border-radius:10px;background:#1a1730;color:var(--accent2);display:grid;place-items:center}
+.grid{display:grid;grid-template-columns:1.6fr 1fr;gap:18px}.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.section-head h2{font-size:16px;margin:0}.section-head span{font-size:12px;color:var(--muted)}.tools{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.tool{padding:16px;background:#121720;border:1px solid var(--line);border-radius:11px;transition:.2s}.tool:hover{transform:translateY(-2px);border-color:#3a4252}.tool-head{display:flex;gap:12px;align-items:center}.tool-icon{width:40px;height:40px;border-radius:10px;background:#1b2030;display:grid;place-items:center;color:#b8adff}.tool h3{font-size:14px;margin:0}.tool p{font-size:12px;color:var(--muted);line-height:1.5;margin:10px 0 14px}.tag{display:inline-block;padding:4px 7px;border-radius:5px;background:#1c2330;color:#9da8bb;font-size:10px}.activity{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.activity:last-child{border:0}.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:6px;flex:none}.activity b{font-size:12px}.activity p{font-size:11px;color:var(--muted);margin:4px 0}.search{display:flex;gap:8px;margin-bottom:14px}.search input{flex:1;background:#0c1016;border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:#fff;outline:none}.search input:focus{border-color:var(--accent)}
+.page{display:none}.page.active{display:block}.modal{display:none;position:fixed;inset:0;background:#0009;z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{width:min(440px,100%);background:#11161f;border:1px solid var(--line);border-radius:14px;padding:22px}.modal-box h2{margin-top:0}.field{margin:13px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}.field input{width:100%;background:#0b0f15;border:1px solid var(--line);padding:11px;border-radius:8px;color:#fff}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.toast{position:fixed;right:20px;bottom:20px;background:#181e28;border:1px solid var(--line);padding:12px 15px;border-radius:9px;font-size:13px;display:none;z-index:60}.toast.show{display:block}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0;width:100%;padding:18px}.menu{display:block}.topbar{gap:12px}.topbar h1{font-size:20px}}
+@media(max-width:560px){.stats{grid-template-columns:1fr}.tools{grid-template-columns:1fr}.top-actions .icon-btn:nth-child(2){display:none}}
+</style>
+
+<style>
+.cookie-panel{margin-top:18px}.cookie-input{width:100%;min-height:150px;resize:vertical;background:#0b0f15;border:1px solid var(--line);border-radius:9px;padding:12px;color:#fff;outline:none;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}.cookie-input:focus{border-color:var(--accent)}.cookie-result{margin-top:14px;display:none}.result-row{display:flex;justify-content:space-between;gap:15px;padding:10px 0;border-bottom:1px solid var(--line);font-size:12px}.result-row span:first-child{color:var(--muted)}.safe{color:#67e8a5}.warn{color:#ffcf66}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="logo">N</div> NovaTools</div>
+  <div class="nav-title">Menu</div>
+  <nav class="nav">
+    <a class="active" data-page="dashboard">◈ <span>Dashboard</span></a>
+    <a data-page="tools">⚙ <span>Tools</span></a>
+    <a data-page="activity">◷ <span>Activity</span></a><a data-page="cookie-checker">◉ <span>Cookie Checker</span></a>
+  </nav>
+  <div class="nav-title">Account</div>
+  <nav class="nav">
+    <a onclick="openLogin()">⇥ <span>Login</span></a>
+    <a onclick="showToast('Settings demo')">⚙ <span>Settings</span></a>
+  </nav>
+  <div class="bottom"><div class="profile"><div class="avatar">N</div><div><b>Guest User</b><br><small>Free account</small></div></div></div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:12px"><button class="icon-btn menu" onclick="toggleMenu()">☰</button><div><h1 id="pageTitle">Dashboard</h1><p>Selamat datang kembali di NovaTools.</p></div></div>
+  <div class="top-actions"><button class="icon-btn" onclick="toggleTheme()">◐</button><button class="btn primary" onclick="openLogin()">Login</button></div>
+</header>
+
+<section class="page active" id="dashboard">
+  <div class="stats">
+    <div class="card stat"><div><span class="label">Total Tools</span><strong>24</strong></div><div class="stat-icon">⚙</div></div>
+    <div class="card stat"><div><span class="label">Tools Used</span><strong>1,284</strong></div><div class="stat-icon">↗</div></div>
+    <div class="card stat"><div><span class="label">Online</span><strong>99.9%</strong></div><div class="stat-icon">✓</div></div>
+    <div class="card stat"><div><span class="label">Status</span><strong style="font-size:18px">Operational</strong></div><div class="stat-icon">●</div></div>
+  </div>
+  <div class="grid">
+    <div class="card"><div class="section-head"><h2>Popular Tools</h2><span>4 tools</span></div><div class="tools">
+      <div class="tool"><div class="tool-head"><div class="tool-icon">⌕</div><h3>Text Formatter</h3></div><p>Format dan rapikan teks dengan cepat.</p><span class="tag">Utility</span></div>
+      <div class="tool"><div class="tool-head"><div class="tool-icon">#</div><h3>JSON Viewer</h3></div><p>Lihat dan format data JSON dengan tampilan rapi.</p><span class="tag">Developer</span></div>
+      <div class="tool"><div class="tool-head"><div class="tool-icon">▣</div><h3>Color Picker</h3></div><p>Gunakan pemilih warna untuk mendapatkan kode warna.</p><span class="tag">Design</span></div>
+      <div class="tool"><div class="tool-head"><div class="tool-icon">↗</div><h3>URL Tools</h3></div><p>Encode dan decode URL secara praktis.</p><span class="tag">Web</span></div>
+    </div></div>
+    <div class="card"><div class="section-head"><h2>Recent Activity</h2><span>Today</span></div>
+      <div class="activity"><div class="dot"></div><div><b>JSON Viewer</b><p>Tool opened · 2 minutes ago</p></div></div>
+      <div class="activity"><div class="dot"></div><div><b>Color Picker</b><p>Tool opened · 15 minutes ago</p></div></div>
+      <div class="activity"><div class="dot"></div><div><b>Text Formatter</b><p>Tool opened · 1 hour ago</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="tools">
+  <div class="card"><div class="section-head"><h2>All Tools</h2><span id="toolCount">6 tools</span></div>
+    <div class="search"><input id="search" placeholder="Cari tools..." oninput="filterTools()"></div>
+    <div class="tools" id="allTools">
+      <div class="tool" data-name="text formatter"><div class="tool-head"><div class="tool-icon">⌕</div><h3>Text Formatter</h3></div><p>Rapikan teks.</p><button class="btn" onclick="showToast('Text Formatter dibuka')">Open</button></div>
+      <div class="tool" data-name="json viewer"><div class="tool-head"><div class="tool-icon">#</div><h3>JSON Viewer</h3></div><p>Format JSON.</p><button class="btn" onclick="showToast('JSON Viewer dibuka')">Open</button></div>
+      <div class="tool" data-name="color picker"><div class="tool-head"><div class="tool-icon">▣</div><h3>Color Picker</h3></div><p>Pilih warna.</p><button class="btn" onclick="showToast('Color Picker dibuka')">Open</button></div>
+      <div class="tool" data-name="url tools"><div class="tool-head"><div class="tool-icon">↗</div><h3>URL Tools</h3></div><p>Encode/decode URL.</p><button class="btn" onclick="showToast('URL Tools dibuka')">Open</button></div>
+      <div class="tool" data-name="timestamp"><div class="tool-head"><div class="tool-icon">◷</div><h3>Timestamp</h3></div><p>Konversi timestamp.</p><button class="btn" onclick="showToast('Timestamp dibuka')">Open</button></div>
+      <div class="tool" data-name="base64"><div class="tool-head"><div class="tool-icon">◇</div><h3>Base64</h3></div><p>Encode/decode Base64 untuk data teks biasa.</p><button class="btn" onclick="showToast('Base64 dibuka')">Open</button></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="page" id="cookie-checker">
+  <div class="card cookie-panel">
+    <div class="section-head">
+      <div><h2>Roblox Cookie Format Checker</h2><span style="display:block;margin-top:5px">Pemeriksaan lokal saja — tidak terhubung ke Roblox.</span></div>
+      <span>Private</span>
+    </div>
+    <p style="font-size:12px;color:var(--muted);line-height:1.6">
+      Tool ini hanya memeriksa teks yang kamu masukkan secara lokal. Jangan memasukkan cookie login atau credential asli.
+    </p>
+    <textarea class="cookie-input" id="cookieInput" placeholder="Masukkan teks contoh/dummy untuk pemeriksaan format..."></textarea>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn primary" onclick="checkCookieFormat()">Check Format</button>
+      <button class="btn" onclick="clearCookieChecker()">Clear</button>
+    </div>
+    <div class="cookie-result" id="cookieResult">
+      <div class="result-row"><span>Status</span><b id="cookieStatus"></b></div>
+      <div class="result-row"><span>Panjang teks</span><b id="cookieLength">0</b></div>
+      <div class="result-row"><span>Karakter</span><b id="cookieChars">-</b></div>
+      <div class="result-row"><span>Disimpan / dikirim</span><b class="safe">Tidak</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="activity"><div class="card"><div class="section-head"><h2>Activity Log</h2><span>Latest</span></div>
+  <div class="activity"><div class="dot"></div><div><b>JSON Viewer</b><p>Opened · Today, 07:42</p></div></div>
+  <div class="activity"><div class="dot"></div><div><b>Color Picker</b><p>Opened · Today, 07:28</p></div></div>
+  <div class="activity"><div class="dot"></div><div><b>Text Formatter</b><p>Opened · Today, 06:51</p></div></div>
+</div></section>
+</main>
+</div>
+
+<div class="modal" id="loginModal"><div class="modal-box"><h2>Login</h2><p style="color:var(--muted);font-size:13px">Demo login — tidak terhubung ke server.</p><div class="field"><label>Username</label><input id="username" placeholder="Username"></div><div class="field"><label>Password</label><input type="password" placeholder="Password"></div><div class="modal-actions"><button class="btn" onclick="closeLogin()">Cancel</button><button class="btn primary" onclick="login()">Login</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const links=document.querySelectorAll('.nav a[data-page]');
+links.forEach(a=>a.onclick=()=>{links.forEach(x=>x.classList.remove('active'));a.classList.add('active');document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(a.dataset.page).classList.add('active');document.getElementById('pageTitle').textContent=a.querySelector('span').textContent;document.getElementById('sidebar').classList.remove('open')});
+function toggleMenu(){document.getElementById('sidebar').classList.toggle('open')}
+function openLogin(){document.getElementById('loginModal').classList.add('show')}
+function closeLogin(){document.getElementById('loginModal').classList.remove('show')}
+function login(){let u=document.getElementById('username').value.trim();if(!u){showToast('Masukkan username');return}closeLogin();showToast('Selamat datang, '+u+'!')}
+function showToast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove('show'),2200)}
+function filterTools(){let q=document.getElementById('search').value.toLowerCase();let items=[...document.querySelectorAll('#allTools .tool')];let n=0;items.forEach(x=>{let ok=x.dataset.name.includes(q);x.style.display=ok?'block':'none';if(ok)n++});document.getElementById('toolCount').textContent=n+' tools'}
+function toggleTheme(){document.body.classList.toggle('light');if(document.body.classList.contains('light')){document.documentElement.style.setProperty('--bg','#f3f5f8');document.documentElement.style.setProperty('--panel','#fff');document.documentElement.style.setProperty('--panel2','#fff');document.documentElement.style.setProperty('--line','#dce1e8');document.documentElement.style.setProperty('--text','#171a20');document.documentElement.style.setProperty('--muted','#667085')}else{location.reload()}}
+document.getElementById('loginModal').addEventListener('click',e=>{if(e.target.id==='loginModal')closeLogin()});
+
+function checkCookieFormat(){
+  const v=document.getElementById('cookieInput').value.trim();
+  const result=document.getElementById('cookieResult');
+  const status=document.getElementById('cookieStatus');
+  document.getElementById('cookieLength').textContent=v.length;
+  if(!v){
+    result.style.display='block';status.textContent='Kosong';status.className='warn';return;
+  }
+  // Intentionally does not validate, decode, contact Roblox, or authenticate.
+  const chars=[];
+  if(/[A-Za-z]/.test(v))chars.push('huruf');
+  if(/[0-9]/.test(v))chars.push('angka');
+  if(/[^A-Za-z0-9\s]/.test(v))chars.push('simbol');
+  document.getElementById('cookieChars').textContent=chars.join(', ')||'karakter lain';
+  status.textContent='Teks terdeteksi — pemeriksaan lokal';
+  status.className='safe';
+  result.style.display='block';
+}
+function clearCookieChecker(){
+  document.getElementById('cookieInput').value='';
+  document.getElementById('cookieResult').style.display='none';
+}
+</script>
+</body>
+</html>
